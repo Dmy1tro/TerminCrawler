@@ -1,0 +1,13 @@
+**/*.cache
+**/*.props
+**/*.pdb
+**/*.dll
+**/*.dtbcache
+**/*.ide
+**/*.suo
+
+**/bin/**
+**/obj/**
+
+**/.idea/**
+**/.vs/**
