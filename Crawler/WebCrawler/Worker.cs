@@ -30,11 +30,11 @@ namespace WebCrawler
                 throw new Exception("Watch previous error.");
             }
 
-            var hasTermin = false;
-
-            while (hasTermin == false)
+            while (true)
             {
                 DebugHelper.LogInfo("Search termin.");
+
+                var hasTermin = false;
 
                 try
                 {
