@@ -1,2 +1,2 @@
 # TerminCrawler
-Program for periodical checking information about termins on website. 
+Program for periodical crawling information about termins.
