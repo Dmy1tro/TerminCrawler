@@ -1,31 +1,43 @@
-﻿using Anticaptcha.Interfaces;
-using Anticaptcha.Services;
+﻿using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using Crawler.Anticaptcha;
+using Crawler.App.Models;
+using Crawler.Core;
+using Crawler.Core.Interfaces;
+using Crawler.Services;
+using Crawler.Services.Helpers;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Remote;
-using Shared.Helpers;
-using System;
-using System.IO;
-using WebCrawler.Models;
-using WebCrawler.Services;
 
-namespace WebCrawler
+namespace Crawler.App
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            var settings = GetSettings();
+            var provider = BuildServiceProvider();
 
-            var anticaptchaService = (IAnticaptchaService)new AnticaptchaService(settings.AnticaptchaConfig);
-            var chromeDriver = (RemoteWebDriver)new ChromeDriver();
-            var terminChecker = new TerminChecker(chromeDriver, anticaptchaService, settings.GeneralConfig.TerminUri);
+            var settings = provider.GetRequiredService<AppSettings>();
+            var chromeDriver = provider.GetRequiredService<ChromeDriver>();
+            var crawler = provider.GetRequiredService<ICrawlerService>();
+            var emailService = provider.GetRequiredService<IEmailService>();
+            var telegramService = provider.GetRequiredService<ITelegramService>();
+            var cts = new CancellationTokenSource();
 
-            var worker = new Worker(terminChecker, settings);
+            Console.CancelKeyPress += (_, e) =>
+            {
+                cts.Cancel();
+                e.Cancel = true;
+            };
+
+            var worker = new Worker(crawler, emailService, telegramService, settings, cts.Token);
 
             try
             {
-                worker.Execute();
+                await worker.Execute();
             }
             catch (Exception ex)
             {
@@ -36,16 +48,30 @@ namespace WebCrawler
                 chromeDriver.Quit();
             }
 
-            DebugHelper.LogInfo("Press any key to exit.");
-
             Console.ReadKey();
         }
 
-        private static Settings GetSettings()
+        private static IServiceProvider BuildServiceProvider()
+        {
+            var settings = GetAppSettings();
+            var services = new ServiceCollection();
+            var chromeDriver = new ChromeDriver();
+
+            services.AddSingleton<AppSettings>(settings);
+            services.AddAnticaptcha(settings.AnticaptchaConfig);
+            services.AddCrawlerServices(settings.EmailConfig, settings.TelegramConfig);
+            services.AddCrawlerCore(settings.CrawlerConfig, chromeDriver);
+
+            var provider = services.BuildServiceProvider();
+
+            return provider;
+        }
+
+        private static AppSettings GetAppSettings()
         {
             var json = File.ReadAllText("appSettings.json");
 
-            var settings = JsonConvert.DeserializeObject<Settings>(json);
+            var settings = JsonConvert.DeserializeObject<AppSettings>(json);
 
             return settings;
         }

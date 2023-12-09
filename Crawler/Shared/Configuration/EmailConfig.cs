@@ -1,4 +1,4 @@
-﻿namespace Shared.Configuration
+﻿namespace Crawler.Services.Configuration
 {
     public class EmailConfig
     {

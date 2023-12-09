@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Anticaptcha.Response
+namespace Crawler.Anticaptcha.Response
 {
     internal class CreateTaskResponse
     {

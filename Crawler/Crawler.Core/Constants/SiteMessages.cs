@@ -1,4 +1,4 @@
-﻿namespace WebCrawler.Constants
+﻿namespace Crawler.Core.Constants
 {
     public class SiteMessages
     {

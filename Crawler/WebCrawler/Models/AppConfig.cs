@@ -1,13 +1,11 @@
-﻿namespace Shared.Configuration
+﻿namespace Crawler.Services.Configuration
 {
-    public class GeneralConfig
+    public class AppConfig
     {
         public string ToEmail { get; set; }
 
         public string ToTelegram { get; set; }
 
         public double PeriodInMinutes { get; set; }
-
-        public string TerminUri { get; set; }
     }
 }

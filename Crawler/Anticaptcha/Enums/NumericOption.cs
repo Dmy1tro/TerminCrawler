@@ -1,4 +1,4 @@
-﻿namespace Anticaptcha.Enums
+﻿namespace Crawler.Anticaptcha.Enums
 {
     public enum NumericOption
     {

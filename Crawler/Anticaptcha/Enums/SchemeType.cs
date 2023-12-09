@@ -1,4 +1,4 @@
-﻿namespace Anticaptcha.Enums
+﻿namespace Crawler.Anticaptcha.Enums
 {
     internal enum SchemeType
     {

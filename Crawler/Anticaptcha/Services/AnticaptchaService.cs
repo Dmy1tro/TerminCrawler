@@ -1,40 +1,38 @@
-﻿using Anticaptcha.Configs;
-using Anticaptcha.Enums;
-using Anticaptcha.Interfaces;
-using Anticaptcha.Models;
-using Anticaptcha.Response;
-using Newtonsoft.Json;
-using Shared.Helpers;
-using System;
+﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Crawler.Anticaptcha.Configs;
+using Crawler.Anticaptcha.Enums;
+using Crawler.Anticaptcha.Interfaces;
+using Crawler.Anticaptcha.Models;
+using Crawler.Anticaptcha.Response;
+using Crawler.Services.Helpers;
 
-namespace Anticaptcha.Services
+namespace Crawler.Anticaptcha.Services
 {
     public class AnticaptchaService : IAnticaptchaService
     {
         private readonly AnticaptchaConfig _config;
+        private readonly HttpClient _httpClient;
 
-        public AnticaptchaService(AnticaptchaConfig config)
+        public AnticaptchaService(AnticaptchaConfig config, IHttpClientFactory factory)
         {
             _config = config;
+            _httpClient = factory.CreateClient("anticaptcha_client");
         }
 
-        public string Process(AnticaptchaInfoBase model)
+        public async Task<string> Process(ImageToTextInfo model)
         {
-            model.ClientKey = _config.ClientKey;
-
-            var taskId = CreateTask(model);
-
-            var result = WaitForResult(taskId, model.ClientKey);
+            var request = CreateTaskRequest.From(model, _config.ClientKey);
+            var taskId = await CreateTask(request);
+            var result = await WaitForResult(taskId, _config.ClientKey);
 
             return result.Solution.Text;
         }
 
-        private int CreateTask(AnticaptchaInfoBase model)
+        private async Task<int> CreateTask(CreateTaskRequest request)
         {
-            var jsonPostData = model.ToJson();
-
-            var response = PostRequest<CreateTaskResponse>(ApiMethod.CreateTask, jsonPostData);
+            var response = await PostRequest<CreateTaskResponse>(ApiMethod.CreateTask, request);
 
             if (response is null || response.ErrorId is null || response.ErrorId != 0)
                 throw new Exception("API error");
@@ -42,21 +40,21 @@ namespace Anticaptcha.Services
             return response.TaskId.Value;
         }
 
-        private TaskResultResponse WaitForResult(int taskId, string clientKey, int maxSeconds = 60, int currentSeconds = 0)
+        private async Task<TaskResultResponse> WaitForResult(int taskId, string clientKey, int maxAttempts = 60, int currentAttempt = 0)
         {
-            if (currentSeconds >= maxSeconds)
+            if (currentAttempt >= maxAttempts)
             {
-                throw new Exception("Time is out");
+                throw new Exception("Time is out while wating for anticaptcha result");
             }
 
-            if (currentSeconds == 0)
-                Task.Delay(3000).GetAwaiter().GetResult();
+            // First attempt wait 3sec then wait 1sec.
+            if (currentAttempt == 0)
+                await Task.Delay(3000);
             else
-                Task.Delay(1000).GetAwaiter().GetResult();
+                await Task.Delay(1000);
 
-            var jsonData = JsonConvert.SerializeObject(new { taskId, clientKey });
-
-            var taskResultInfo = PostRequest<TaskResultResponse>(ApiMethod.GetTaskResult, jsonData);
+            var taskResultRequest = new GetTaskResultRequest { ClientKey = clientKey, TaskId = taskId };
+            var taskResultInfo = await PostRequest<TaskResultResponse>(ApiMethod.GetTaskResult, taskResultRequest);
 
             if (taskResultInfo is null || taskResultInfo.ErrorId is null)
                 throw new Exception("API error");
@@ -68,19 +66,19 @@ namespace Anticaptcha.Services
 
             if (taskResultInfo.Status == StatusType.Processing)
             {
-                return WaitForResult(taskId, clientKey, maxSeconds, currentSeconds + 1);
+                return await WaitForResult(taskId, clientKey, maxAttempts, currentAttempt + 1);
             }
 
             return taskResultInfo;
         }
 
-        private T PostRequest<T>(ApiMethod method, string jsonData) where T : class
+        private async Task<T> PostRequest<T>(ApiMethod method, object request) where T : class
         {
             var methodName = char.ToLowerInvariant(method.ToString()[0]) + method.ToString().Substring(1);
+            var host = "api.anti-captcha.com";
+            var scheme = SchemeType.Https;
 
-            var response = HttpHelper.Post<T>(
-                new Uri(AnticaptchaInfoBase.Scheme + "://" + AnticaptchaInfoBase.Host + "/" + methodName),
-                jsonData);
+            var response = await _httpClient.Post<T>(new Uri($"{scheme}://{host}/{methodName}"), request);
 
             return response;
         }

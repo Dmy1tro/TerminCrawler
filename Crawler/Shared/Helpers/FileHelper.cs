@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Shared.Helpers
+namespace Crawler.Services.Helpers
 {
     public class FileHelper
     {
@@ -10,10 +10,10 @@ namespace Shared.Helpers
             try
             {
                 using var image = new FileStream(path, FileMode.Open);
-                using var m = new MemoryStream();
+                using var memoryStream = new MemoryStream();
 
-                image.CopyTo(m);
-                var imageBytes = m.ToArray();
+                image.CopyTo(memoryStream);
+                var imageBytes = memoryStream.ToArray();
                 var base64String = Convert.ToBase64String(imageBytes);
 
                 return base64String;

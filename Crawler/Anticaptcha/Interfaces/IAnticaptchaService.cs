@@ -1,9 +1,10 @@
-﻿using Anticaptcha.Models;
+﻿using System.Threading.Tasks;
+using Crawler.Anticaptcha.Models;
 
-namespace Anticaptcha.Interfaces
+namespace Crawler.Anticaptcha.Interfaces
 {
     public interface IAnticaptchaService
     {
-        public string Process(AnticaptchaInfoBase anticaptchaInfo);
+        Task<string> Process(ImageToTextInfo imageToText);
     }
 }

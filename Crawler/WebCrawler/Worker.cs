@@ -1,122 +1,154 @@
-﻿using Shared.Configuration;
-using Shared.Helpers;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using WebCrawler.Constants;
-using WebCrawler.Interfaces;
-using WebCrawler.Models;
+using Crawler.App.Constants;
+using Crawler.App.Models;
+using Crawler.Core.Interfaces;
+using Crawler.Core.Models;
+using Crawler.Services.Helpers;
 
-namespace WebCrawler
+namespace Crawler.App
 {
     public class Worker
     {
-        private readonly ITerminChecker _terminChecker;
-        private readonly GeneralConfig _config;
-        private readonly EmailConfig _emailConfig;
-        private readonly TelegramConfig _telegramConfig;
+        private readonly ICrawlerService _crawler;
+        private readonly IEmailService _emailService;
+        private readonly ITelegramService _telegramService;
+        private readonly AppSettings _settings;
+        private readonly CancellationToken _cancellationToken;
 
-        public Worker(ITerminChecker terminChecker, Settings settings)
+        public Worker(
+            ICrawlerService crawler,
+            IEmailService emailService,
+            ITelegramService telegramService,
+            AppSettings settings,
+            CancellationToken cancellationToken)
         {
-            _terminChecker = terminChecker;
-            _config = settings.GeneralConfig;
-            _emailConfig = settings.EmailConfig;
-            _telegramConfig = settings.TelegramConfig;
+            _crawler = crawler;
+            _emailService = emailService;
+            _telegramService = telegramService;
+            _settings = settings;
+            _cancellationToken = cancellationToken;
         }
 
-        public void Execute()
+        public async Task Execute()
         {
-            if (CheckMessagingWorks() == false)
+            var errors = await ValidateMessaging();
+
+            if (errors.Any())
             {
-                throw new Exception("Watch previous error.");
+                foreach (var error in errors)
+                {
+                    DebugHelper.LogError(error);
+                }
+
+                throw new Exception("Failed to start.");
             }
 
-            while (true)
+            while (!_cancellationToken.IsCancellationRequested)
             {
-                DebugHelper.LogInfo("Search termin.");
+                DebugHelper.LogInfo("Run search...");
 
-                var hasTermin = false;
+                var searchResult = SearchResult.NotFound;
 
                 try
                 {
-                    hasTermin = _terminChecker.HasTermin();
+                    searchResult = await _crawler.Search();
                 }
                 catch (Exception ex)
                 {
                     DebugHelper.LogError(ex.Message);
                 }
 
-                if (hasTermin)
+                if (searchResult == SearchResult.Success)
                 {
-                    DebugHelper.LogSuccess("Termin finded!");
-                    DebugHelper.LogInfo($"Sending info...");
+                    DebugHelper.LogSuccess("Info finded!");
+                    DebugHelper.LogSuccess("Sending message...");
 
-                    if (!string.IsNullOrEmpty(_config.ToEmail))
+                    if (!string.IsNullOrEmpty(_settings.GeneralConfig.ToEmail))
                     {
-                        EmailHelper.SendEmail(_emailConfig,
-                                              _config.ToEmail, 
-                                              MessageText.TerminFindedSubject, 
-                                              MessageText.TerminFindedMessage(_config.TerminUri));
+                        await RunSafe(() =>
+                        {
+                            _emailService.SendEmail(
+                                _settings.GeneralConfig.ToEmail,
+                                MessageText.ObjectFindedSubject,
+                                MessageText.ObjectFindedMessage(_settings.CrawlerConfig.Uri)
+                            );
+
+                            return Task.CompletedTask;
+                        });
                     }
 
-                    if (!string.IsNullOrEmpty(_config.ToTelegram))
+                    if (!string.IsNullOrEmpty(_settings.GeneralConfig.ToTelegram))
                     {
-                        TelegramHelper.SendMessage(_telegramConfig, 
-                                                   _config.ToTelegram,
-                                                   MessageText.TerminFindedMessage(_config.TerminUri));
+                        await RunSafe(() =>
+                        {
+                            return _telegramService.SendMessage(
+                                _settings.GeneralConfig.ToTelegram,
+                                MessageText.ObjectFindedMessage(_settings.CrawlerConfig.Uri)
+                            );
+                        });
                     }
                 }
                 else
                 {
-                    DebugHelper.LogInfo("Termin not finded.");
+                    DebugHelper.LogInfo("Not found. Waiting...");
                 }
 
-                Task.Delay(TimeSpan.FromMinutes(_config.PeriodInMinutes)).Wait();
+                await Task.Delay(TimeSpan.FromMinutes(_settings.GeneralConfig.PeriodInMinutes));
             }
         }
 
-        private bool CheckMessagingWorks()
+        private async Task<ICollection<string>> ValidateMessaging(bool sendTestMessage = true)
         {
-            var isValid = true;
+            var errors = new List<string>();
 
-            if (string.IsNullOrEmpty(_config.ToEmail.Trim()) &&
-                string.IsNullOrEmpty(_config.ToTelegram.Trim()))
+            if (string.IsNullOrEmpty(_settings.GeneralConfig.ToEmail.Trim()) &&
+                string.IsNullOrEmpty(_settings.GeneralConfig.ToTelegram.Trim()))
             {
-                DebugHelper.LogError("Not found email or telegram info.\n" +
-                                     "Please, input needed information in appSettings.json file.");
-
-                isValid = false;
+                errors.Add("Not found email or telegram info.\nPlease, input email or telegram or both information in appSettings.json file.");
+                return errors;
             }
 
-            if (!string.IsNullOrEmpty(_config.ToEmail))
+            if (!string.IsNullOrEmpty(_settings.GeneralConfig.ToEmail) && sendTestMessage)
             {
-                var emailWorks = EmailHelper.SendEmail(_emailConfig, 
-                                                       _config.ToEmail, 
-                                                       MessageText.TestMessageSubject, 
-                                                       MessageText.TestMailMessage);
-
-                if (emailWorks == false)
+                try
                 {
-                    DebugHelper.LogError($"Failed to send test message to email: {_config.ToEmail}.");
-
-                    isValid = false;
+                    _emailService.SendEmail(_settings.GeneralConfig.ToEmail, MessageText.TestMessageSubject, MessageText.TestMailMessage);
+                }
+                catch (Exception ex)
+                {
+                    errors.Add($"Failed to send test message to email: {_settings.GeneralConfig.ToEmail}.");
                 }
             }
 
-            if (!string.IsNullOrEmpty(_config.ToTelegram))
+            if (!string.IsNullOrEmpty(_settings.GeneralConfig.ToTelegram) && sendTestMessage)
             {
-                var telegaWorks = TelegramHelper.SendMessage(_telegramConfig, 
-                                                             _config.ToTelegram, 
-                                                             MessageText.TestTelegramMessage);
-
-                if (telegaWorks == false)
+                try
                 {
-                    DebugHelper.LogError($"Failed to send test message to telegram: {_config.ToTelegram}.");
-
-                    isValid = false;
+                    await _telegramService.SendMessage(_settings.GeneralConfig.ToTelegram, MessageText.TestTelegramMessage);
+                }
+                catch (Exception ex)
+                {
+                    errors.Add($"Failed to send test message to telegram: {_settings.GeneralConfig.ToTelegram}.");
                 }
             }
 
-            return isValid;
+            return errors;
+        }
+
+        private async Task RunSafe(Func<Task> func)
+        {
+            try
+            {
+                await func();
+            }
+            catch (Exception ex)
+            {
+                DebugHelper.LogError(ex);
+            }
         }
     }
 }

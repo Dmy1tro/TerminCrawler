@@ -1,40 +1,36 @@
 ﻿using System;
 
-namespace Shared.Helpers
+namespace Crawler.Services.Helpers
 {
     public class DebugHelper
     {
+        public static void LogError(Exception ex)
+        {
+            Write($"{DateTime.Now} -> Error: {ex}\n", ConsoleColor.Red);
+        }
+
         public static void LogError(string message)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-
-            Console.WriteLine($"{DateTime.Now} -> Error occured :(\n" +
-                              $"Error message: {message}\n");
-
-            SetDefaultColor();
+            Write($"{DateTime.Now} -> Error: {message}\n", ConsoleColor.Red);
         }
 
         public static void LogInfo(string message)
         {
-            Console.ForegroundColor = ConsoleColor.White;
-
-            Console.WriteLine($"{DateTime.Now} -> Info: {message}\n");
-
-            SetDefaultColor();
+            Write($"{DateTime.Now} -> Info: {message}\n", ConsoleColor.White);
         }
 
         public static void LogSuccess(string message)
         {
-            Console.ForegroundColor = ConsoleColor.Green;
-
-            Console.WriteLine($"{DateTime.Now} -> Success: {message}\n");
-
-            SetDefaultColor();
+            Write($"{DateTime.Now} -> Success: {message}\n", ConsoleColor.Green);
         }
 
-        private static void SetDefaultColor()
+        private static void Write(string message, ConsoleColor color)
         {
-            Console.ForegroundColor = ConsoleColor.White;
+            var defaultColor = Console.ForegroundColor;
+
+            Console.ForegroundColor = color;
+            Console.WriteLine(message);
+            Console.ForegroundColor = defaultColor;
         }
     }
 }

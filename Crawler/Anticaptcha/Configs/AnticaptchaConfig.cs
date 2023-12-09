@@ -1,4 +1,4 @@
-﻿namespace Anticaptcha.Configs
+﻿namespace Crawler.Anticaptcha.Configs
 {
     public class AnticaptchaConfig
     {

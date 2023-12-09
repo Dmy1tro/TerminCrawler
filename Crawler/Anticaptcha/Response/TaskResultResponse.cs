@@ -1,7 +1,7 @@
-﻿using Anticaptcha.Enums;
+﻿using Crawler.Anticaptcha.Enums;
 using Newtonsoft.Json;
 
-namespace Anticaptcha.Response
+namespace Crawler.Anticaptcha.Response
 {
     internal class TaskResultResponse
     {

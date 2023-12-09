@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace Anticaptcha.Response
+namespace Crawler.Anticaptcha.Response
 {
     internal class SolutionData
     {
