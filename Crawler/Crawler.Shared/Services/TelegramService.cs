@@ -27,8 +27,13 @@ namespace Crawler.Shared.Services
 
             var chatId = updates
                     .Select(x => x.Message?.Chat)
-                    .FirstOrDefault(x => x != null && x.Username != null && x.Username.Equals(toUserName, StringComparison.InvariantCultureIgnoreCase))
+                    .FirstOrDefault(x => x != null && x.Username != null && x.Username.Equals(toUserName, StringComparison.InvariantCultureIgnoreCase))?
                     .Id;
+
+            if (chatId == null)
+            {
+                throw new Exception($"Failed to found telegram chat with user '${toUserName}'. Make sure you /start the bot.");
+            }
 
             await tgClient.SendTextMessageAsync(chatId, message);
         }
