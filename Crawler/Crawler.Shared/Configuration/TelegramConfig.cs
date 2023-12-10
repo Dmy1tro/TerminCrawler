@@ -1,4 +1,4 @@
-﻿namespace Crawler.Services.Configuration
+﻿namespace Crawler.Shared.Configuration
 {
     public class TelegramConfig
     {

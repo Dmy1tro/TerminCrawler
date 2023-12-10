@@ -6,8 +6,8 @@ using Crawler.Anticaptcha;
 using Crawler.App.Models;
 using Crawler.Core;
 using Crawler.Core.Interfaces;
-using Crawler.Services;
-using Crawler.Services.Helpers;
+using Crawler.Shared;
+using Crawler.Shared.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using OpenQA.Selenium.Chrome;
@@ -59,7 +59,7 @@ namespace Crawler.App
 
             services.AddSingleton<AppSettings>(settings);
             services.AddAnticaptcha(settings.AnticaptchaConfig);
-            services.AddCrawlerServices(settings.EmailConfig, settings.TelegramConfig);
+            services.AddCrawlerShared(settings.EmailConfig, settings.TelegramConfig);
             services.AddCrawlerCore(settings.CrawlerConfig, chromeDriver);
 
             var provider = services.BuildServiceProvider();

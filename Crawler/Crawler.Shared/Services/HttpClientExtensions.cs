@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Crawler.Services.Helpers
+namespace Crawler.Shared.Services
 {
     public static class HttpClientExtensions
     {
@@ -13,11 +13,11 @@ namespace Crawler.Services.Helpers
             this HttpClient httpClient,
             Uri uri,
             object request,
-            JsonSerializerSettings? serializerSettings = default) where TResponse : class
+            JsonSerializerSettings serializerSettings = default) where TResponse : class
         {
             serializerSettings ??= GetDefaultSerializerSettings();
             var jsonData = JsonConvert.SerializeObject(request, serializerSettings);
-            var rawData = await Post(httpClient, uri, jsonData);
+            var rawData = await httpClient.Post(uri, jsonData);
 
             if (string.IsNullOrEmpty(rawData))
                 return null;

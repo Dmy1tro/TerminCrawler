@@ -6,7 +6,7 @@ using Crawler.Anticaptcha.Enums;
 using Crawler.Anticaptcha.Interfaces;
 using Crawler.Anticaptcha.Models;
 using Crawler.Anticaptcha.Response;
-using Crawler.Services.Helpers;
+using Crawler.Shared.Services;
 
 namespace Crawler.Anticaptcha.Services
 {

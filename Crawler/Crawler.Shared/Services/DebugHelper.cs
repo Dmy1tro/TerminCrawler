@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Crawler.Services.Helpers
+namespace Crawler.Shared.Services
 {
     public class DebugHelper
     {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Crawler.Services.Configuration;
+using Crawler.Shared.Configuration;
 using Telegram.Bot;
 
-namespace Crawler.Services.Helpers
+namespace Crawler.Shared.Services
 {
     public interface ITelegramService
     {

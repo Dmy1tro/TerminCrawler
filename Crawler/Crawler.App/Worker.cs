@@ -7,7 +7,7 @@ using Crawler.App.Constants;
 using Crawler.App.Models;
 using Crawler.Core.Interfaces;
 using Crawler.Core.Models;
-using Crawler.Services.Helpers;
+using Crawler.Shared.Services;
 
 namespace Crawler.App
 {

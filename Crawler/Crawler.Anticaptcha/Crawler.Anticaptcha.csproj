@@ -6,8 +6,14 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Telegram.Bot" Version="19.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Crawler.Services\Crawler.Shared.csproj" />
+    <ProjectReference Include="..\Crawler.Shared\Crawler.Shared.csproj" />
+    <ProjectReference Include="..\Shared\Crawler.Services.csproj" />
   </ItemGroup>
 
 </Project>

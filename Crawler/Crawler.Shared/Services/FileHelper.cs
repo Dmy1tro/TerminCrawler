@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Crawler.Services.Helpers
+namespace Crawler.Shared.Services
 {
     public class FileHelper
     {

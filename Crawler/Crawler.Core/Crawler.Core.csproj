@@ -14,6 +14,9 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Anticaptcha\Crawler.Anticaptcha.csproj" />
+	  <ProjectReference Include="..\Crawler.Anticaptcha\Crawler.Anticaptcha.csproj" />
+	  <ProjectReference Include="..\Crawler.Services\Crawler.Shared.csproj" />
+	  <ProjectReference Include="..\Crawler.Shared\Crawler.Shared.csproj" />
 	</ItemGroup>
 
 </Project>

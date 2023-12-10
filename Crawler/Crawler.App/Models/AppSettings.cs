@@ -1,6 +1,7 @@
 ﻿using Crawler.Anticaptcha.Configs;
 using Crawler.Core.Configs;
 using Crawler.Services.Configuration;
+using Crawler.Shared.Configuration;
 
 namespace Crawler.App.Models
 {

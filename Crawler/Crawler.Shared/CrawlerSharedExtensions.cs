@@ -1,20 +1,20 @@
-﻿using Crawler.Services.Configuration;
-using Crawler.Services.Helpers;
+﻿using Crawler.Shared.Configuration;
+using Crawler.Shared.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Crawler.Services
+namespace Crawler.Shared
 {
-    public static class CrawlerServicesExtensions
+    public static class CrawlerSharedExtensions
     {
-        public static IServiceCollection AddCrawlerServices(
+        public static IServiceCollection AddCrawlerShared(
             this IServiceCollection services,
             EmailConfig emailConfig,
             TelegramConfig telegramConfig)
         {
-            services.AddSingleton<EmailConfig>(emailConfig);
+            services.AddSingleton(emailConfig);
             services.AddTransient<IEmailService, EmailService>();
 
-            services.AddSingleton<TelegramConfig>(telegramConfig);
+            services.AddSingleton(telegramConfig);
             services.AddTransient<ITelegramService, TelegramService>();
 
             return services;

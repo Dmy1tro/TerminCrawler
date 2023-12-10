@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Crawler.App", "WebCrawler\Crawler.App.csproj", "{555E6C00-F309-49E0-9F05-EDEF3BAE85D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Crawler.Core", "Crawler.Core\Crawler.Core.csproj", "{0DC66F71-D7F5-4451-A74B-E8BF91B34755}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Crawler.Anticaptcha", "Anticaptcha\Crawler.Anticaptcha.csproj", "{97F964A5-A98F-4454-B30A-F18AA78F58C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Crawler.Anticaptcha", "Crawler.Anticaptcha\Crawler.Anticaptcha.csproj", "{AE29A535-D777-49B6-AB75-F9E49AE0DAB5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Crawler.Services", "Shared\Crawler.Services.csproj", "{B9E7E273-A771-4F9F-8D37-2E3BB1DC7B45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Crawler.App", "Crawler.App\Crawler.App.csproj", "{0288A759-76D1-47A6-8A95-CF31F98843D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crawler.Core", "Crawler.Core\Crawler.Core.csproj", "{0DC66F71-D7F5-4451-A74B-E8BF91B34755}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Crawler.Shared", "Crawler.Shared\Crawler.Shared.csproj", "{10651F9A-4091-4F46-B673-84944F25A54E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,22 +17,22 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{555E6C00-F309-49E0-9F05-EDEF3BAE85D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{555E6C00-F309-49E0-9F05-EDEF3BAE85D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{555E6C00-F309-49E0-9F05-EDEF3BAE85D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{555E6C00-F309-49E0-9F05-EDEF3BAE85D3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{97F964A5-A98F-4454-B30A-F18AA78F58C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{97F964A5-A98F-4454-B30A-F18AA78F58C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{97F964A5-A98F-4454-B30A-F18AA78F58C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{97F964A5-A98F-4454-B30A-F18AA78F58C5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B9E7E273-A771-4F9F-8D37-2E3BB1DC7B45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B9E7E273-A771-4F9F-8D37-2E3BB1DC7B45}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B9E7E273-A771-4F9F-8D37-2E3BB1DC7B45}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B9E7E273-A771-4F9F-8D37-2E3BB1DC7B45}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0DC66F71-D7F5-4451-A74B-E8BF91B34755}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0DC66F71-D7F5-4451-A74B-E8BF91B34755}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DC66F71-D7F5-4451-A74B-E8BF91B34755}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DC66F71-D7F5-4451-A74B-E8BF91B34755}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE29A535-D777-49B6-AB75-F9E49AE0DAB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE29A535-D777-49B6-AB75-F9E49AE0DAB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE29A535-D777-49B6-AB75-F9E49AE0DAB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE29A535-D777-49B6-AB75-F9E49AE0DAB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0288A759-76D1-47A6-8A95-CF31F98843D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0288A759-76D1-47A6-8A95-CF31F98843D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0288A759-76D1-47A6-8A95-CF31F98843D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0288A759-76D1-47A6-8A95-CF31F98843D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10651F9A-4091-4F46-B673-84944F25A54E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10651F9A-4091-4F46-B673-84944F25A54E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10651F9A-4091-4F46-B673-84944F25A54E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10651F9A-4091-4F46-B673-84944F25A54E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

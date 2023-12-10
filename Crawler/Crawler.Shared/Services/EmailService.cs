@@ -1,9 +1,9 @@
-﻿using Crawler.Services.Configuration;
+﻿using Crawler.Shared.Configuration;
 using System;
 using System.Net;
 using System.Net.Mail;
 
-namespace Crawler.Services.Helpers
+namespace Crawler.Shared.Services
 {
     public interface IEmailService
     {
